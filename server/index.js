@@ -7,14 +7,15 @@ const app = express();
 const server = http.createServer(app);
 const io = socketIO(server, {
   cors: {
-    origin: "http://localhost:5173",
+    origin: "https://chatmeet-g1ux.onrender.com",
     methods: ["GET", "POST"],
     credentials: true,
   },
+  transports: ["websocket", "polling"],
 });
 
 const corsOptions = {
-  origin: "http://localhost:5173",
+  origin: "https://chatmeet-g1ux.onrender.com",
   methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
   allowedHeaders: "Content-Type,Authorization",
   credentials: true,
@@ -23,11 +24,10 @@ const corsOptions = {
 app.use(cors(corsOptions));
 
 let waitingQueue = [];
-const activeConnections = {}; 
+const activeConnections = {};
 
 io.on("connection", (socket) => {
   console.log("New user connected:", socket.id);
-
 
   if (activeConnections[socket.id]) {
     console.log("User already connected to a chat:", socket.id);
@@ -60,10 +60,10 @@ io.on("connection", (socket) => {
   }
 
   socket.on("offer", (data) => {
-    const room = activeConnections[socket.id]; 
+    const room = activeConnections[socket.id];
     if (room) {
       console.log("Sending offer to the room", room);
-      socket.to(room).emit("offer", data); 
+      socket.to(room).emit("offer", data);
     }
   });
 
@@ -71,15 +71,15 @@ io.on("connection", (socket) => {
     const room = activeConnections[socket.id];
     if (room) {
       console.log("Sending answer to the room", room);
-      socket.to(room).emit("answer", data); 
+      socket.to(room).emit("answer", data);
     }
   });
 
   socket.on("ice-candidate", (data) => {
-    const room = activeConnections[socket.id]; 
+    const room = activeConnections[socket.id];
     if (room) {
       console.log("Sending ICE candidate to the room", room);
-      socket.to(room).emit("ice-candidate", data); 
+      socket.to(room).emit("ice-candidate", data);
     }
   });
 
@@ -104,8 +104,8 @@ io.on("connection", (socket) => {
       const otherSocket = io.sockets.sockets.get(otherUserId);
 
       if (otherSocket) {
-        otherSocket.leave(room); 
-        delete activeConnections[otherUserId]; 
+        otherSocket.leave(room);
+        delete activeConnections[otherUserId];
       }
 
       delete activeConnections[user1Id];

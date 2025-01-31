@@ -3,7 +3,7 @@ import io from "socket.io-client";
 import Header from "./Header";
 import { ImSpinner6 } from "react-icons/im";
 import { IoSend } from "react-icons/io5";
-const socket = io("http://localhost:5000");
+const socket = io("https://chatmeet-1.onrender.com");
 
 const ChatHome = () => {
   const [messages, setMessages] = useState([]);
@@ -362,6 +362,5 @@ const ChatHome = () => {
     </>
   );
 };
-
 
 export default ChatHome;
