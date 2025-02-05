@@ -19,11 +19,11 @@ const ChatHome = () => {
 
   const iceServers = {
     iceServers: [
-      { urls: "stun:stun.l.google.com:19302" },
+      // { urls: "stun:stun.l.google.com:19302" }, // Optional STUN
       {
-        urls: "turn:turn.anyfirewall.com:3478?transport=tcp",
-        username: "webrtc",
-        credential: "webrtc",
+        urls: "turn:chatmeet.onrender.com:3478",
+        username: "anonymouschatmeet",
+        credential: "anonymous",
       },
     ],
   };
