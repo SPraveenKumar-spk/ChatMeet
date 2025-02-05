@@ -64,11 +64,11 @@ const ChatHome = () => {
     };
 
     pc.ontrack = (event) => {
-      console.log("remote videoref", event.streams[0]);
-
+      console.log("Received remote stream:", event.streams[0]);
       remoteVideoRef.current.srcObject = event.streams[0];
 
       remoteVideoRef.current.onloadedmetadata = () => {
+        console.log("Remote video metadata loaded");
         remoteVideoRef.current.play().catch((error) => {
           console.error("Error trying to play remote video:", error);
         });
@@ -76,23 +76,17 @@ const ChatHome = () => {
 
       setIsSearching(false);
     };
-
     navigator.mediaDevices
       .getUserMedia({ video: true, audio: true })
       .then((stream) => {
         localVideoRef.current.srcObject = stream;
-        console.log("local video", stream);
+        console.log("Local video tracks:", stream.getTracks());
 
-        if (pc.signalingState !== "closed") {
-          stream.getTracks().forEach((track) => pc.addTrack(track, stream));
-        } else {
-          console.warn("Attempted to add track to a closed PeerConnection");
-        }
+        stream.getTracks().forEach((track) => pc.addTrack(track, stream));
       })
       .catch((error) => {
         console.error("Error accessing media devices:", error);
       });
-
     socket.on("offer", async (offer) => {
       try {
         await pc.setRemoteDescription(new RTCSessionDescription(offer));
